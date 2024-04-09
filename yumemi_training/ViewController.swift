@@ -12,19 +12,12 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBAction func reloadButton(_ sender: Any) {
-        print("Button Clicked")
-        var result = YumemiWeather.fetchWeatherCondition()
-        let cloudyImage = UIImage(named:"iconmonstr-umbrella-1")
-        let rainyImage = UIImage(named:"iconmonstr-weather-1")
-        let sunnyImage = UIImage(named:"iconmonstr-weather-11")
-        if(result == "cloudy"){
-            imageView.image = cloudyImage
-        }else if(result == "rainy"){
-            imageView.image = rainyImage
-        }else if(result == "sunny"){
-            imageView.image = sunnyImage
-        }else{
-            print("ERROR")
+        do {
+            let result = try YumemiWeather.fetchWeatherCondition(at: "your_area_here")
+            displayWeatherImage(result)
+        } catch {
+            print("エラーが発生しました: \(error)")
+            displayErrorAlert()
         }
     }
     
@@ -32,6 +25,29 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+    }
+    
+    private func displayWeatherImage(_ result: String) {
+           let imageName: String
+           switch result {
+           case "cloudy":
+               imageName = "iconmonstr-umbrella-1"
+           case "rainy":
+               imageName = "iconmonstr-weather-1"
+           case "sunny":
+               imageName = "iconmonstr-weather-11"
+           default:
+               print("Unknown weather condition")
+               return
+           }
+           imageView.image = UIImage(named: imageName)
+       }
+       
+
+    private func displayErrorAlert() {
+           let alertController = UIAlertController(title: "エラー", message: "天気情報の取得に失敗しました。", preferredStyle: .alert)
+           alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+           present(alertController, animated: true, completion: nil)
     }
 }
 
