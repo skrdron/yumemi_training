@@ -8,38 +8,36 @@
 import UIKit
 import YumemiWeather
 
-//JsonからObject(struct)へ変換 これらを表示する
 struct WeatherData: Codable {
-    let area: String
-    let info: WeatherInfo
-}
-
-struct WeatherInfo: Codable {
     let max_temperature: Int
     let date: String
     let min_temperature: Int
     let weather_condition: String
 }
 
+struct Request:Encodable{
+    let area:String
+    let date:String
+}
+
 class ViewController: UIViewController {
     
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var BlueLabel:UILabel!
-    @IBOutlet weak var RedLabel:UILabel!
+    @IBOutlet weak var blueLabel: UILabel!
+    @IBOutlet weak var redLabel: UILabel!
+    
        
     @IBAction func reloadButton(_ sender: Any) {
+        print("ボタンがクリックされました")
         do {
-          // 指定された地域と日付を含むJSON文字列を作成
-          guard let jsonString = encodeFetchWeatherParameter(area: "Tokyo", date: Date()) else { return }
-          // 作成されたJSON文字列を使って天気情報のJSON文字列を取得
+          guard let jsonString = encodeFetchWeatherParameter(area: "tokyo", date: Date()) else { return }
           let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
-          // 取得した天気情報のJSON文字列をパースし、WeatherData Structにデコード
-          guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
-          // パースされた天気情報を元に、最高気温と最低気温をBlueLabelとRedLabelに表示
-          BlueLabel.text = String(weatherData.info.min_temperature)
-          RedLabel.text = String(weatherData.info.max_temperature)
-          //天気情報をもとにImageに表示
-          displayWeatherImage(weatherData.info.weather_condition)
+            guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
+                return print("リターンされました")
+            }
+          blueLabel.text = String(weatherData.min_temperature)
+          redLabel.text = String(weatherData.max_temperature)
+          displayWeatherImage(weatherData.weather_condition)
         } catch {
           print(error)
           displayErrorAlert()
@@ -47,31 +45,27 @@ class ViewController: UIViewController {
     }
     
     
-     //指定された地域と日付を含むJSON文字列を生成する
-     private func encodeFetchWeatherParameter(area: String, date: Date) -> String? {
-          let dateFormatter = ISO8601DateFormatter()
-          dateFormatter.formatOptions = [.withFullDate, .withTime, .withTimeZone, .withColonSeparatorInTimeZone]
-          let dateString = dateFormatter.string(from: date)
-         //地域と日付が含まれたJSON文字列を返す
-          return """
-          {
-              "area": "\(area)",
-              "date": "\(dateString)"
-          }
-          """
-      }
+    private func encodeFetchWeatherParameter(area: String, date: Date) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let dateString = dateFormatter.string(from: date)
+        let request = Request(area: area, date: dateString)
+        let encoder = JSONEncoder()
+        
+        let jsonData = try? encoder.encode(request)
+        
+        return String(data:jsonData!,encoding: .utf8)!
+    }
       
-    //天気情報のJSON文字列をWeatherData構造体にデコードする役割
+
     private func decodeFetchWeatherReturns(jsonString: String) -> WeatherData?{
       guard let jsonData = jsonString.data(using: .utf8) else { return nil }
-      guard let weatherData = try? JSONDecoder().decode([WeatherData].self, from: jsonData).first else { return nil }
-      //デコードされたWeatherData構造体を返す
+      guard let weatherData = try? JSONDecoder().decode(WeatherData.self, from: jsonData) else { return nil }
       return weatherData
     }
     
     override func viewDidLoad() {
       super.viewDidLoad()
-      // Do any additional setup after loading the view.
         
     }
     
