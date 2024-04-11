@@ -8,6 +8,41 @@
 import UIKit
 import YumemiWeather
 
+//1.WeatherFetchingというプロトコルを定義
+protocol WeatherFetching {
+    //2.WeatherFetchingには天気予報を取得する関数を宣言する
+    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData
+}
+
+//3.WeatherFetchingの実装クラスWeatherProviderを定義
+class WeatherProvider:WeatherFetching{
+    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
+      //4.ViewControllerから天気予報を取得する実装を切り離し、WeatherProviderにおく
+        let jsonString = encodeFetchWeatherParameter(request)
+        //→WeatherRequest型にしないといけない
+        let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
+        guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
+    }
+    
+    //スコープ内にencodeFetchWeatherParameterとdecodeFetchWeatherReturnsを置く
+    private func encodeFetchWeatherParameter(area: String, date: Date) -> String? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+        let dateString = dateFormatter.string(from: date)
+        let request = WeatherRequest(area: area, date: dateString)
+        let encoder = JSONEncoder()
+        let jsonData = try? encoder.encode(request)
+        return String(data:jsonData!,encoding: .utf8)!
+    }
+      
+
+    private func decodeFetchWeatherReturns(jsonString: String) -> WeatherData?{
+      guard let jsonData = jsonString.data(using: .utf8) else { return nil }
+      guard let weatherData = try? JSONDecoder().decode(WeatherData.self, from: jsonData) else { return nil }
+      return weatherData
+    }
+}
+
 
 struct WeatherData: Codable {
     let maxTemperature: Int
@@ -28,7 +63,23 @@ struct WeatherRequest: Codable {
     let date: String
 }
 
+
 class SecondViewController: UIViewController {
+    //5.ViewControllerはWeatherFetchingをプロパティとしてもつ 型はWeatherFetching 初期化する際にWeatherProvider()というインスタンスを代入
+    //クラスのインスタンスを生成する際に、クラス名に続けて括弧()を使用してインスタンスを作成
+    //var weatherProvider: WeatherFetching？
+    //var weatherProvider: WeatherFetching = WeatherProvider()
+
+    private let weatherProvider: WeatherFetching
+    //7.外部からViewControllerにWeatherProviderを渡す
+    init?(coder: NSCoder,weatherProvider: WeatherFetching) {
+      self.weatherProvider = weatherProvider
+      super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+      fatalError()
+    }
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var blueLabel: UILabel!
@@ -38,12 +89,15 @@ class SecondViewController: UIViewController {
         self.performSegue(withIdentifier: "toFirst", sender: self)
     }
     
+    
        
     @IBAction func reloadButton(_ sender: Any) {
         do {
-          guard let jsonString = encodeFetchWeatherParameter(area: "tokyo", date: Date()) else { return }
-          let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
-          guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
+          //6.ViewControllerの天気予報を取得する実装をWeatherFetchingの関数呼び出しに置き換える
+          //Cannot convert value of type 'Date' to expected argument type 'String'
+          let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+          //Cannot find 'weatherProvider' in scope
+          let weatherData = try weatherProvider.fetchWeather(request)
           blueLabel.text = String(weatherData.minTemperature)
           redLabel.text = String(weatherData.maxTemperature)
           displayWeatherImage(weatherData.weatherCondition)
@@ -52,21 +106,10 @@ class SecondViewController: UIViewController {
         }
     }
     
-    private func encodeFetchWeatherParameter(area: String, date: Date) -> String? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
-        let dateString = dateFormatter.string(from: date)
-        let request = WeatherRequest(area: area, date: dateString)
-        let encoder = JSONEncoder()
-        let jsonData = try? encoder.encode(request)
-        return String(data:jsonData!,encoding: .utf8)!
-    }
-      
-
-    private func decodeFetchWeatherReturns(jsonString: String) -> WeatherData?{
-      guard let jsonData = jsonString.data(using: .utf8) else { return nil }
-      guard let weatherData = try? JSONDecoder().decode(WeatherData.self, from: jsonData) else { return nil }
-      return weatherData
+    private func formattedDateString(_ date: Date) -> String {
+      let dateFormatter = DateFormatter()
+      dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
+      return dateFormatter.string(from: date)
     }
     
     override func viewDidLoad() {
@@ -85,7 +128,7 @@ class SecondViewController: UIViewController {
             imageName = "iconmonstr-weather-11"
         default:
             imageName = ""
-            print("未知の天気情報")
+            print("無効な天気情報")
         }
         imageView.image = UIImage(named: imageName)
     }
@@ -95,5 +138,21 @@ class SecondViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
+    
+    private func addObserverForAppWillEnterForeground() {
+        NotificationCenter.default.addObserver(self, selector: #selector(updateWeatherData),
+        name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+       
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+       
+    @objc func updateWeatherData() {
+        print("天気情報をアップデート")
+        reloadButton(self)
+    }
 }
+
+
 
