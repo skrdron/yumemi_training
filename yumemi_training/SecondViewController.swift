@@ -18,13 +18,21 @@ protocol WeatherFetching {
 class WeatherProvider:WeatherFetching{
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
       //4.ViewControllerから天気予報を取得する実装を切り離し、WeatherProviderにおく
-        let jsonString = encodeFetchWeatherParameter(request)
-        //→WeatherRequest型にしないといけない
-        let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
-        guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
+        let jsonString = encodeFetchWeatherParameter(area:request.area, date: Date())
+        //let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
+        let jsonData = try JSONEncoder().encode(request)
+        let jsonStringWeather = try YumemiWeather.fetchWeather(String(data: jsonData, encoding: .utf8)!)
+        //guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
+        guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
+          throw WeatherProviderError.decodingError
+        }
+        return weatherData
     }
     
-    //スコープ内にencodeFetchWeatherParameterとdecodeFetchWeatherReturnsを置く
+    enum WeatherProviderError: Error {
+        case decodingError
+    }
+    
     private func encodeFetchWeatherParameter(area: String, date: Date) -> String? {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZZZZZ"
@@ -94,9 +102,7 @@ class SecondViewController: UIViewController {
     @IBAction func reloadButton(_ sender: Any) {
         do {
           //6.ViewControllerの天気予報を取得する実装をWeatherFetchingの関数呼び出しに置き換える
-          //Cannot convert value of type 'Date' to expected argument type 'String'
           let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
-          //Cannot find 'weatherProvider' in scope
           let weatherData = try weatherProvider.fetchWeather(request)
           blueLabel.text = String(weatherData.minTemperature)
           redLabel.text = String(weatherData.maxTemperature)
