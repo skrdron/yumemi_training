@@ -9,28 +9,54 @@ import XCTest
 @testable import yumemi_training
 
 final class yumemi_trainingTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    
+    //ビューコントローラ/クラスのインスタンスを保持するプロパティを定義
+    var viewController: SecondViewController!
+    var weatherProviderMock: WeatherProviderMock!
+    
+    override func setUp() {
+        super.setUp()
+        //テストを行うstoryboardを定義
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        viewController = storyboard.instantiateViewController(withIdentifier: "SecondView") as? SecondViewController
+        // テスト用にWeatherProviderのモックを作成し、ViewControllerに注入
+        let weatherProviderMock = WeatherProviderMock()
+        viewController.weatherProvider = weatherProviderMock
+        viewController.loadViewIfNeeded()
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    override func tearDown() {
+        viewController = nil
+        super.tearDown()
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
+    
+    func testDisplayWeatherImageForSunnyWeather() {
+           // 期待される画像
+           let expectedImage = "iconmonstr-weather-11"
+           // テスト用の天気ダミーデータ
+           let dummyWeatherData = WeatherData(
+            maxTemperature: 30,
+            date: "2024-04-12T12:00:00+09:00",
+            minTemperature: 20,
+            weatherCondition: "sunny"
+           )
+           //↑これらを使って表示してみる → 天気情報を設定、リロードボタンを呼び出したい
+           viewController.weatherData = dummyWeatherData
+           viewController.reloadButton(self)
+           XCTAssertEqual(viewController.imageView.image, UIImage(named: expectedImage))
+       }
 }
+
+// WeatherProviderクラスの振る舞いを模倣したテスト用のクラス = モッククラス
+class WeatherProviderMock: WeatherFetching {
+    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
+        // モックのデータを返す（sunny ver.）
+        return WeatherData(
+            maxTemperature: 30,
+            date: "2024-04-12T12:00:00+09:00",
+            minTemperature: 20,
+            weatherCondition: "sunny"
+        )
+    }
+}
+
