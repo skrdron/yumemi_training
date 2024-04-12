@@ -15,14 +15,12 @@ protocol WeatherFetching {
 }
 
 //3.WeatherFetchingの実装クラスWeatherProviderを定義
-class WeatherProvider:WeatherFetching{
+public class WeatherProvider:WeatherFetching{
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
       //4.ViewControllerから天気予報を取得する実装を切り離し、WeatherProviderにおく
         let jsonString = encodeFetchWeatherParameter(area:request.area, date: Date())
-        //let jsonStringWeather = try YumemiWeather.fetchWeather(jsonString)
         let jsonData = try JSONEncoder().encode(request)
         let jsonStringWeather = try YumemiWeather.fetchWeather(String(data: jsonData, encoding: .utf8)!)
-        //guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else { return }
         guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
           throw WeatherProviderError.decodingError
         }
@@ -74,19 +72,17 @@ struct WeatherRequest: Codable {
 
 class SecondViewController: UIViewController {
     //5.ViewControllerはWeatherFetchingをプロパティとしてもつ 型はWeatherFetching 初期化する際にWeatherProvider()というインスタンスを代入
-    //クラスのインスタンスを生成する際に、クラス名に続けて括弧()を使用してインスタンスを作成
-    //var weatherProvider: WeatherFetching？
-    //var weatherProvider: WeatherFetching = WeatherProvider()
-
-    private let weatherProvider: WeatherFetching
-    //7.外部からViewControllerにWeatherProviderを渡す
+    public var weatherProvider: WeatherFetching
+    public var weatherData: WeatherData?
+    
+    //7.外部からViewControllerにWeatherProviderを渡す = DI
     init?(coder: NSCoder,weatherProvider: WeatherFetching) {
       self.weatherProvider = weatherProvider
       super.init(coder: coder)
     }
     
     required init?(coder: NSCoder) {
-      fatalError()
+      fatalError("想定しないエラーが発生したためプログラムを終了します。")
     }
     
     @IBOutlet weak var imageView: UIImageView!
