@@ -8,19 +8,16 @@
 import UIKit
 import YumemiWeather
 
-//1.WeatherFetchingというプロトコルを定義
+
 protocol WeatherFetching {
-    //2.WeatherFetchingには天気予報を取得する関数を宣言する
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData
 }
 
-//3.WeatherFetchingの実装クラスWeatherProviderを定義
 public class WeatherProvider:WeatherFetching{
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
-      //4.ViewControllerから天気予報を取得する実装を切り離し、WeatherProviderにおく
-        let jsonString = encodeFetchWeatherParameter(area:request.area, date: Date())
+        _ = encodeFetchWeatherParameter(area:request.area, date: Date())
         let jsonData = try JSONEncoder().encode(request)
-        let jsonStringWeather = try YumemiWeather.fetchWeather(String(data: jsonData, encoding: .utf8)!)
+        let jsonStringWeather = try YumemiWeather.syncFetchWeather(String(data: jsonData, encoding: .utf8)!)
         guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
           throw WeatherProviderError.decodingError
         }
@@ -71,11 +68,9 @@ struct WeatherRequest: Codable {
 
 
 class SecondViewController: UIViewController {
-    //5.ViewControllerはWeatherFetchingをプロパティとしてもつ 型はWeatherFetching 初期化する際にWeatherProvider()というインスタンスを代入
     public var weatherProvider: WeatherFetching
     public var weatherData: WeatherData?
     
-    //7.外部からViewControllerにWeatherProviderを渡す = DI
     init?(coder: NSCoder,weatherProvider: WeatherFetching) {
       self.weatherProvider = weatherProvider
       super.init(coder: coder)
@@ -93,20 +88,34 @@ class SecondViewController: UIViewController {
         self.performSegue(withIdentifier: "toFirst", sender: self)
     }
     
-    
+    //ローディングアイコン
+    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
        
     @IBAction func reloadButton(_ sender: Any) {
-        do {
-          //6.ViewControllerの天気予報を取得する実装をWeatherFetchingの関数呼び出しに置き換える
-          let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
-          let weatherData = try weatherProvider.fetchWeather(request)
-          blueLabel.text = String(weatherData.minTemperature)
-          redLabel.text = String(weatherData.maxTemperature)
-          displayWeatherImage(weatherData.weatherCondition)
-        } catch {
-          displayErrorAlert()
+        activityIndicatorView.isHidden = false
+        activityIndicatorView.startAnimating()
+        
+        let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+          DispatchQueue.global(qos: .userInitiated).async {
+            do {
+              let weatherData = try self.weatherProvider.fetchWeather(request)
+              DispatchQueue.main.async {
+                self.activityIndicatorView.isHidden = true
+                self.activityIndicatorView.stopAnimating()
+                self.blueLabel.text = String(weatherData.minTemperature)
+                self.redLabel.text = String(weatherData.maxTemperature)
+                self.displayWeatherImage(weatherData.weatherCondition)
+               }
+            } catch {
+              DispatchQueue.main.async {
+                self.activityIndicatorView.isHidden = true
+                self.activityIndicatorView.stopAnimating()
+                self.displayErrorAlert()
+               }
+            }
         }
     }
+    
     
     private func formattedDateString(_ date: Date) -> String {
       let dateFormatter = DateFormatter()
@@ -116,7 +125,7 @@ class SecondViewController: UIViewController {
     
     override func viewDidLoad() {
       super.viewDidLoad()
-        
+      activityIndicatorView.isHidden = true
     }
     
     private func displayWeatherImage(_ weatherCondition: String) {

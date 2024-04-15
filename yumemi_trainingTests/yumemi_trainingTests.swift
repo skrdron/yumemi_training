@@ -10,53 +10,101 @@ import XCTest
 
 final class yumemi_trainingTests: XCTestCase {
     
-    //ビューコントローラ/クラスのインスタンスを保持するプロパティを定義
-    var viewController: SecondViewController!
-    var weatherProviderMock: WeatherProviderMock!
-    
-    override func setUp() {
-        super.setUp()
-        //テストを行うstoryboardを定義
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        viewController = storyboard.instantiateViewController(withIdentifier: "SecondView") as? SecondViewController
-        // テスト用にWeatherProviderのモックを作成し、ViewControllerに注入
-        let weatherProviderMock = WeatherProviderMock()
-        viewController.weatherProvider = weatherProviderMock
-        viewController.loadViewIfNeeded()
+    // ビューコントローラ/クラスのインスタンスを保持するプロパティを定義
+        var viewController: SecondViewController!
+        var weatherProviderMock: WeatherProviderMock!
+        
+        override func setUp() {
+            super.setUp()
+            
+            // テストを行うstoryboardを定義
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            
+            // WeatherProviderのモックを作成
+            weatherProviderMock = WeatherProviderMock()
+            
+            // viewControllerを初期化し、weatherProviderにモックを注入
+            viewController = storyboard.instantiateViewController(identifier: "SecondView") { coder in
+                SecondViewController(coder: coder, weatherProvider: self.weatherProviderMock)
+            }
+            
+            viewController.loadViewIfNeeded()
+        }
+        
+        override func tearDown() {
+            viewController = nil
+            super.tearDown()
+        }
+        
+        func testWeatherDataDisplayedInLabels() {
+            // モックの天気データ
+            let testData = WeatherData(maxTemperature: 25, date: "2024-04-15T12:00:00+09:00", minTemperature: 15, weatherCondition: "sunny")
+            weatherProviderMock.mockedWeatherData = testData
+            
+            // 天気情報を更新
+            viewController.reloadButton(self)
+            
+            // 非同期処理の完了を待つexpectation
+            let expectation = XCTestExpectation(description: "天気情報がロードされた")
+               
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                // UILabelに最低気温と最高気温が表示されているか比較する
+                XCTAssertEqual(self.viewController.blueLabel.text, "\(testData.minTemperature)")
+                XCTAssertEqual(self.viewController.redLabel.text, "\(testData.maxTemperature)")
+                   
+                // expectationをfulfillしてテスト完了を通知
+                expectation.fulfill()
+            }
+               
+            // expectationがfulfillされるまで待機
+            wait(for: [expectation], timeout: 2)
+        }
+        
+        func testDisplayWeatherImageForWeatherCondition() {
+            // テスト用のデータ
+            let testData: [(condition: String, expectedImage: String)] = [
+                ("sunny", "iconmonstr-weather-11"),
+                ("cloudy", "iconmonstr-umbrella-1"),
+                ("rainy", "iconmonstr-weather-1")
+            ]
+            
+            for data in testData {
+                // モックの天気データ
+                weatherProviderMock.mockedWeatherData = WeatherData(
+                    maxTemperature: 30,
+                    date: "2024-04-12T12:00:00+09:00",
+                    minTemperature: 20,
+                    weatherCondition: data.condition
+                )
+                
+                // 天気情報を更新
+                viewController.reloadButton(self)
+                
+                // 非同期処理の完了を待つexpectation
+                let expectation = XCTestExpectation(description: "天気イメージがロードされた")
+                       
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                // 期待される画像と実際の画像を比較する
+                  XCTAssertEqual(self.viewController.imageView.image, UIImage(named: data.expectedImage))
+                           
+                  // expectationをfulfillしてテスト完了を通知
+                  expectation.fulfill()
+                }
+                       
+                // expectationがfulfillされるまで待機
+                wait(for: [expectation], timeout: 2)
+            }
+        }
     }
-    
-    override func tearDown() {
-        viewController = nil
-        super.tearDown()
-    }
-    
-    func testDisplayWeatherImageForSunnyWeather() {
-           // 期待される画像
-           let expectedImage = "iconmonstr-weather-11"
-           // テスト用の天気ダミーデータ
-           let dummyWeatherData = WeatherData(
-            maxTemperature: 30,
-            date: "2024-04-12T12:00:00+09:00",
-            minTemperature: 20,
-            weatherCondition: "sunny"
-           )
-           //↑これらを使って表示してみる → 天気情報を設定、リロードボタンを呼び出したい
-           viewController.weatherData = dummyWeatherData
-           viewController.reloadButton(self)
-           XCTAssertEqual(viewController.imageView.image, UIImage(named: expectedImage))
-       }
-}
 
-// WeatherProviderクラスの振る舞いを模倣したテスト用のクラス = モッククラス
-class WeatherProviderMock: WeatherFetching {
-    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
-        // モックのデータを返す（sunny ver.）
-        return WeatherData(
-            maxTemperature: 30,
-            date: "2024-04-12T12:00:00+09:00",
-            minTemperature: 20,
-            weatherCondition: "sunny"
-        )
+    // テスト用のWeatherProviderクラスのモック
+    class WeatherProviderMock: WeatherFetching {
+        var mockedWeatherData: WeatherData?
+        
+        func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
+            guard let data = mockedWeatherData else {
+                fatalError("モックデータがセットされていません")
+            }
+            return data
+        }
     }
-}
-
