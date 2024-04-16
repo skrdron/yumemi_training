@@ -7,13 +7,25 @@
 
 import UIKit
 import YumemiWeather
+import CoreLocation // 位置情報を取得するために必要なモジュールをインポート
 
+//1.プロトコル（依頼書）の実装
+protocol APIDelegate {
+    func didUpdateWeatherData(_ weatherData: WeatherData)
+}
 
 protocol WeatherFetching {
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData
 }
 
 public class WeatherProvider:WeatherFetching{
+    //2.delegate プロパティを持っておく
+    var delegate: APIDelegate? = nil
+    
+    
+    func push() {
+        
+    }
     func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
         _ = encodeFetchWeatherParameter(area:request.area, date: Date())
         let jsonData = try JSONEncoder().encode(request)
@@ -21,6 +33,7 @@ public class WeatherProvider:WeatherFetching{
         guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
           throw WeatherProviderError.decodingError
         }
+        delegate?.didUpdateWeatherData(weatherData)
         return weatherData
     }
     
@@ -67,7 +80,7 @@ struct WeatherRequest: Codable {
 }
 
 
-class SecondViewController: UIViewController {
+class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDelegate {
     public var weatherProvider: WeatherFetching
     public var weatherData: WeatherData?
     
