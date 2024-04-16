@@ -7,34 +7,46 @@
 
 import UIKit
 import YumemiWeather
-import CoreLocation // 位置情報を取得するために必要なモジュールをインポート
+import CoreLocation
 
-//1.プロトコル（依頼書）の実装
-protocol APIDelegate {
-    func didUpdateWeatherData(_ weatherData: WeatherData)
+
+//プロトコル（依頼書）の実装　以下のfuncをAPIDelegateとして扱える(切り替え可能)
+protocol APIDelegate: AnyObject {
+    func didUpdateWeather(_ weatherData: WeatherData)
+    func didFailWithError(_ error: Error)
 }
 
 protocol WeatherFetching {
-    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData
+    //@escaping:クロージャをエスケープさせる = 関数の実行が完了した後にクロージャを呼び出す
+    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void)
 }
 
+//protcolを通して処理の一部(結果を表示)を他に任せている
 public class WeatherProvider:WeatherFetching{
-    //2.delegate プロパティを持っておく
-    var delegate: APIDelegate? = nil
-    
-    
-    func push() {
-        
-    }
-    func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
-        _ = encodeFetchWeatherParameter(area:request.area, date: Date())
-        let jsonData = try JSONEncoder().encode(request)
-        let jsonStringWeather = try YumemiWeather.syncFetchWeather(String(data: jsonData, encoding: .utf8)!)
-        guard let weatherData = decodeFetchWeatherReturns(jsonString: jsonStringWeather) else {
-          throw WeatherProviderError.decodingError
+    //Protocolを使ってデリゲートをweak参照で宣言
+    weak var delegate: APIDelegate?
+
+    //クロージャー　{(仮引数:型,---) -> 型 in 文.....}
+    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+        _ = encodeFetchWeatherParameter(area: request.area, date: Date())
+        do {
+            let jsonData = try JSONEncoder().encode(request)
+            //APIの変更　{ result in ... }:クロージャー = 一連の処理をブロックとしてまとめ、特定の関数に渡す
+            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) { result in
+                switch result {
+                case .success(let jsonStringWeather):
+                    if let weatherData = self.decodeFetchWeatherReturns(jsonString: jsonStringWeather) {
+                        completion(.success(weatherData))
+                    } else {
+                        completion(.failure(WeatherProviderError.decodingError))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        } catch {
+            completion(.failure(error))
         }
-        delegate?.didUpdateWeatherData(weatherData)
-        return weatherData
     }
     
     enum WeatherProviderError: Error {
@@ -80,7 +92,24 @@ struct WeatherRequest: Codable {
 }
 
 
+//データを更新し表示する処理を行う（APIからデータを取得する部分は他に任せる）
 class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDelegate {
+    func didUpdateWeather(_ weatherData: WeatherData) {
+        DispatchQueue.main.async {
+            // データの更新
+            self.blueLabel.text = String(weatherData.minTemperature)
+            self.redLabel.text = String(weatherData.maxTemperature)
+            self.displayWeatherImage(weatherData.weatherCondition)
+        }
+    }
+    
+    func didFailWithError(_ error: Error) {
+        DispatchQueue.main.async {
+            // エラーメッセージの表示
+            self.displayErrorAlert("エラーが発生しました: \(error.localizedDescription)")
+        }
+    }
+    
     public var weatherProvider: WeatherFetching
     public var weatherData: WeatherData?
     
@@ -101,31 +130,29 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
         self.performSegue(withIdentifier: "toFirst", sender: self)
     }
     
-    //ローディングアイコン
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
        
     @IBAction func reloadButton(_ sender: Any) {
         activityIndicatorView.isHidden = false
-        activityIndicatorView.startAnimating()
-        
-        let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
-          DispatchQueue.global(qos: .userInitiated).async {
-            do {
-              let weatherData = try self.weatherProvider.fetchWeather(request)
-              DispatchQueue.main.async {
-                self.activityIndicatorView.isHidden = true
-                self.activityIndicatorView.stopAnimating()
-                self.blueLabel.text = String(weatherData.minTemperature)
-                self.redLabel.text = String(weatherData.maxTemperature)
-                self.displayWeatherImage(weatherData.weatherCondition)
+           activityIndicatorView.startAnimating()
+           
+           let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+           DispatchQueue.global(qos: .userInitiated).async {
+               self.weatherProvider.fetchWeather(request) { result in
+                   DispatchQueue.main.async {
+                       self.activityIndicatorView.isHidden = true
+                       self.activityIndicatorView.stopAnimating()
+
+                       switch result {
+                       case .success(let weatherData):
+                           self.blueLabel.text = String(weatherData.minTemperature)
+                           self.redLabel.text = String(weatherData.maxTemperature)
+                           self.displayWeatherImage(weatherData.weatherCondition)
+                       case .failure:
+                           self.displayErrorAlert("天気情報の取得に失敗しました")
+                       }
+                   }
                }
-            } catch {
-              DispatchQueue.main.async {
-                self.activityIndicatorView.isHidden = true
-                self.activityIndicatorView.stopAnimating()
-                self.displayErrorAlert()
-               }
-            }
         }
     }
     
@@ -157,8 +184,8 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
         imageView.image = UIImage(named: imageName)
     }
     
-    private func displayErrorAlert() {
-        let alertController = UIAlertController(title: "エラー", message: "天気情報の取得に失敗しました。", preferredStyle: .alert)
+    private func displayErrorAlert(_ message: String) {
+        let alertController = UIAlertController(title: "エラー", message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
@@ -170,6 +197,8 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
        
     deinit {
         NotificationCenter.default.removeObserver(self)
+        
+        print("SecondViewControllerが解放されています")
     }
        
     @objc func updateWeatherData() {
