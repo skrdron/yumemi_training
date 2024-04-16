@@ -97,14 +97,18 @@ final class yumemi_trainingTests: XCTestCase {
         }
     }
 
-    // テスト用のWeatherProviderクラスのモック
-    class WeatherProviderMock: WeatherFetching {
-        var mockedWeatherData: WeatherData?
-        
-        func fetchWeather(_ request: WeatherRequest) throws -> WeatherData {
-            guard let data = mockedWeatherData else {
-                fatalError("モックデータがセットされていません")
-            }
-            return data
+// テスト用のWeatherProviderクラスのモック
+class WeatherProviderMock: WeatherFetching {
+    var mockedWeatherData: WeatherData?
+    var mockedError: Error?
+    
+    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+        if let data = mockedWeatherData {
+            completion(.success(data))
+        } else if let error = mockedError {
+            completion(.failure(error))
+        } else {
+            fatalError("モックデータまたはモックエラーがセットされていません")
         }
     }
+}
