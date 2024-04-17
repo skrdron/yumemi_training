@@ -102,11 +102,11 @@ class WeatherProviderMock: WeatherFetching {
     var mockedWeatherData: WeatherData?
     var mockedError: Error?
     
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+    func fetchWeather(_ request: WeatherRequest) async throws -> WeatherData {
         if let data = mockedWeatherData {
-            completion(.success(data))
+            return data
         } else if let error = mockedError {
-            completion(.failure(error))
+            throw error
         } else {
             fatalError("モックデータまたはモックエラーがセットされていません")
         }

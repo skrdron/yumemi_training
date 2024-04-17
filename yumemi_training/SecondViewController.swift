@@ -10,36 +10,21 @@ import YumemiWeather
 import CoreLocation
 
 
-
 protocol WeatherFetching {
-    //@escaping:クロージャをエスケープさせる = 関数の実行が完了した後にクロージャを呼び出す
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void)
+    func fetchWeather(_ request: WeatherRequest) async throws -> WeatherData
 }
 
-//protcolを通して処理の一部(結果を表示)を他に任せている
 public class WeatherProvider:WeatherFetching{
-    //クロージャー　{(仮引数:型,---) -> 型 in 文.....}
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+    func fetchWeather(_ request: WeatherRequest) async throws -> WeatherData {
         _ = encodeFetchWeatherParameter(area: request.area, date: Date())
-        do {
-            let jsonData = try JSONEncoder().encode(request)
-            //APIの変更　{ result in ... }:クロージャー = 一連の処理をブロックとしてまとめ、特定の関数に渡す
-            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) {[weak self] result in
-                guard let self = self else {return}
-                switch result {
-                case .success(let jsonStringWeather):
-                    if let weatherData = self.decodeFetchWeatherReturns(jsonString: jsonStringWeather) {
-                        completion(.success(weatherData))
-                    } else {
-                        completion(.failure(WeatherProviderError.decodingError))
-                    }
-                case .failure(let error):
-                    completion(.failure(error))
-                }
-            }
-        } catch {
-            completion(.failure(error))
+        //APIの結果を、コンカレンシー形式で受け取るように変更したい
+        let jsonData = try JSONEncoder().encode(request)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        let result = try await YumemiWeather.asyncFetchWeather(jsonString)
+        guard let weatherData = decodeFetchWeatherReturns(jsonString: result) else{
+            throw WeatherProviderError.decodingError
         }
+        return weatherData
     }
     
     enum WeatherProviderError: Error {
@@ -85,7 +70,6 @@ struct WeatherRequest: Codable {
 }
 
 
-//データを更新し表示する処理を行う（APIからデータを取得する部分は他に任せる）
 class SecondViewController: UIViewController, CLLocationManagerDelegate {
     public var weatherProvider: WeatherFetching
     public var weatherData: WeatherData?
@@ -110,24 +94,20 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
        
     @IBAction func reloadButton(_ sender: Any) {
-        activityIndicatorView.isHidden = false
-        activityIndicatorView.startAnimating()
-           
-        let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
-        DispatchQueue.global(qos: .userInitiated).async {
-               self.weatherProvider.fetchWeather(request) { result in
-                   DispatchQueue.main.async {
-                       self.activityIndicatorView.isHidden = true
-                       self.activityIndicatorView.stopAnimating()
-
-                       switch result {
-                       case .success(let weatherData):
-                           self.updateUIWithWeatherData(weatherData)
-                       case .failure:
-                           self.displayErrorAlert("天気情報の取得に失敗しました")
-                       }
-                   }
-               }
+        Task {
+          activityIndicatorView.isHidden = true
+          activityIndicatorView.stopAnimating()
+          do {
+            let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+            activityIndicatorView.isHidden = false
+            activityIndicatorView.startAnimating()
+            let weatherData = try await weatherProvider.fetchWeather(request)
+            updateUIWithWeatherData(weatherData)
+            activityIndicatorView.isHidden = true
+          } catch {
+            displayErrorAlert("天気情報取得に失敗しました")
+          }
+                
         }
     }
     
