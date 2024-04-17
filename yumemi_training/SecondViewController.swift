@@ -10,11 +10,6 @@ import YumemiWeather
 import CoreLocation
 
 
-//プロトコル（依頼書）の実装　以下のfuncをAPIDelegateとして扱える(切り替え可能)
-protocol APIDelegate: AnyObject {
-    func didUpdateWeather(_ weatherData: WeatherData)
-    func didFailWithError(_ error: Error)
-}
 
 protocol WeatherFetching {
     //@escaping:クロージャをエスケープさせる = 関数の実行が完了した後にクロージャを呼び出す
@@ -23,9 +18,6 @@ protocol WeatherFetching {
 
 //protcolを通して処理の一部(結果を表示)を他に任せている
 public class WeatherProvider:WeatherFetching{
-    //Protocolを使ってデリゲートをweak参照で宣言
-    weak var delegate: APIDelegate?
-
     //クロージャー　{(仮引数:型,---) -> 型 in 文.....}
     func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
         _ = encodeFetchWeatherParameter(area: request.area, date: Date())
@@ -93,23 +85,7 @@ struct WeatherRequest: Codable {
 
 
 //データを更新し表示する処理を行う（APIからデータを取得する部分は他に任せる）
-class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDelegate {
-    func didUpdateWeather(_ weatherData: WeatherData) {
-        DispatchQueue.main.async {
-            // データの更新
-            self.blueLabel.text = String(weatherData.minTemperature)
-            self.redLabel.text = String(weatherData.maxTemperature)
-            self.displayWeatherImage(weatherData.weatherCondition)
-        }
-    }
-    
-    func didFailWithError(_ error: Error) {
-        DispatchQueue.main.async {
-            // エラーメッセージの表示
-            self.displayErrorAlert("エラーが発生しました: \(error.localizedDescription)")
-        }
-    }
-    
+class SecondViewController: UIViewController, CLLocationManagerDelegate {
     public var weatherProvider: WeatherFetching
     public var weatherData: WeatherData?
     
@@ -134,10 +110,10 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
        
     @IBAction func reloadButton(_ sender: Any) {
         activityIndicatorView.isHidden = false
-           activityIndicatorView.startAnimating()
+        activityIndicatorView.startAnimating()
            
-           let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
-           DispatchQueue.global(qos: .userInitiated).async {
+        let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+        DispatchQueue.global(qos: .userInitiated).async {
                self.weatherProvider.fetchWeather(request) { result in
                    DispatchQueue.main.async {
                        self.activityIndicatorView.isHidden = true
@@ -145,9 +121,7 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
 
                        switch result {
                        case .success(let weatherData):
-                           self.blueLabel.text = String(weatherData.minTemperature)
-                           self.redLabel.text = String(weatherData.maxTemperature)
-                           self.displayWeatherImage(weatherData.weatherCondition)
+                           self.updateUIWithWeatherData(weatherData)
                        case .failure:
                            self.displayErrorAlert("天気情報の取得に失敗しました")
                        }
@@ -166,6 +140,12 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
     override func viewDidLoad() {
       super.viewDidLoad()
       activityIndicatorView.isHidden = true
+    }
+    
+    private func updateUIWithWeatherData(_ weatherData: WeatherData) {
+          blueLabel.text = String(weatherData.minTemperature)
+          redLabel.text = String(weatherData.maxTemperature)
+          displayWeatherImage(weatherData.weatherCondition)
     }
     
     private func displayWeatherImage(_ weatherCondition: String) {
