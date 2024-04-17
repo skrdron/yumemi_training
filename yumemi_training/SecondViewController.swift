@@ -12,13 +12,13 @@ import CoreLocation
 
 //プロトコル（依頼書）の実装　以下のfuncをAPIDelegateとして扱える(切り替え可能)
 protocol APIDelegate: AnyObject {
-    func didUpdateWeather(_ weatherData: WeatherData)
     func didFailWithError(_ error: Error)
+    func didUpdateWeather(_ weatherData: WeatherData)
 }
 
 protocol WeatherFetching {
-    //@escaping:クロージャをエスケープさせる = 関数の実行が完了した後にクロージャを呼び出す
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void)
+    var delegate:APIDelegate? {get set}
+    func fetchWeather(_ request: WeatherRequest)
 }
 
 //protcolを通して処理の一部(結果を表示)を他に任せている
@@ -27,25 +27,25 @@ public class WeatherProvider:WeatherFetching{
     weak var delegate: APIDelegate?
 
     //クロージャー　{(仮引数:型,---) -> 型 in 文.....}
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+    func fetchWeather(_ request: WeatherRequest){
         _ = encodeFetchWeatherParameter(area: request.area, date: Date())
         do {
             let jsonData = try JSONEncoder().encode(request)
             //APIの変更　{ result in ... }:クロージャー = 一連の処理をブロックとしてまとめ、特定の関数に渡す
-            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) { result in
+            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) {[weak self]  result in
                 switch result {
                 case .success(let jsonStringWeather):
-                    if let weatherData = self.decodeFetchWeatherReturns(jsonString: jsonStringWeather) {
-                        completion(.success(weatherData))
+                    if let weatherData = self?.decodeFetchWeatherReturns(jsonString: jsonStringWeather) {
+                        self?.delegate?.didUpdateWeather(weatherData)
                     } else {
-                        completion(.failure(WeatherProviderError.decodingError))
+                        self?.delegate?.didFailWithError(WeatherProviderError.decodingError)
                     }
                 case .failure(let error):
-                    completion(.failure(error))
+                    self?.delegate?.didFailWithError(error)
                 }
             }
         } catch {
-            completion(.failure(error))
+            delegate?.didFailWithError(error)
         }
     }
     
@@ -116,6 +116,7 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
     init?(coder: NSCoder,weatherProvider: WeatherFetching) {
       self.weatherProvider = weatherProvider
       super.init(coder: coder)
+      self.weatherProvider.delegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -134,25 +135,11 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate,APIDeleg
        
     @IBAction func reloadButton(_ sender: Any) {
         activityIndicatorView.isHidden = false
-           activityIndicatorView.startAnimating()
+        activityIndicatorView.startAnimating()
            
-           let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
+        let request = WeatherRequest(area: "tokyo", date: formattedDateString(Date()))
            DispatchQueue.global(qos: .userInitiated).async {
-               self.weatherProvider.fetchWeather(request) { result in
-                   DispatchQueue.main.async {
-                       self.activityIndicatorView.isHidden = true
-                       self.activityIndicatorView.stopAnimating()
-
-                       switch result {
-                       case .success(let weatherData):
-                           self.blueLabel.text = String(weatherData.minTemperature)
-                           self.redLabel.text = String(weatherData.maxTemperature)
-                           self.displayWeatherImage(weatherData.weatherCondition)
-                       case .failure:
-                           self.displayErrorAlert("天気情報の取得に失敗しました")
-                       }
-                   }
-               }
+               self.weatherProvider.fetchWeather(request)
         }
     }
     

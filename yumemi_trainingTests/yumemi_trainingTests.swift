@@ -99,14 +99,16 @@ final class yumemi_trainingTests: XCTestCase {
 
 // テスト用のWeatherProviderクラスのモック
 class WeatherProviderMock: WeatherFetching {
+    weak var delegate: APIDelegate?
+    
     var mockedWeatherData: WeatherData?
     var mockedError: Error?
     
-    func fetchWeather(_ request: WeatherRequest, completion: @escaping (Result<WeatherData, Error>) -> Void) {
+    func fetchWeather(_ request: WeatherRequest) {
         if let data = mockedWeatherData {
-            completion(.success(data))
+            self.delegate?.didUpdateWeather(data)
         } else if let error = mockedError {
-            completion(.failure(error))
+            self.delegate?.didFailWithError(error)
         } else {
             fatalError("モックデータまたはモックエラーがセットされていません")
         }
