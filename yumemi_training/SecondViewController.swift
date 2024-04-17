@@ -24,7 +24,8 @@ public class WeatherProvider:WeatherFetching{
         do {
             let jsonData = try JSONEncoder().encode(request)
             //APIの変更　{ result in ... }:クロージャー = 一連の処理をブロックとしてまとめ、特定の関数に渡す
-            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) { result in
+            YumemiWeather.callbackFetchWeather(String(data: jsonData, encoding: .utf8)!) {[weak self] result in
+                guard let self = self else {return}
                 switch result {
                 case .success(let jsonStringWeather):
                     if let weatherData = self.decodeFetchWeatherReturns(jsonString: jsonStringWeather) {
