@@ -14,11 +14,11 @@
             <objects>
                 <viewController storyboardIdentifier="SecondView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="BYZ-38-t0r" customClass="SecondViewController" customModule="yumemi_training" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="XdV-e5-H0P">
-                                <rect key="frame" x="98" y="315" width="197" height="222"/>
+                                <rect key="frame" x="98" y="256" width="197" height="330"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kY8-rv-9Yp">
                                         <rect key="frame" x="0.0" y="0.0" width="197" height="196.66666666666666"/>
@@ -27,16 +27,16 @@
                                         </constraints>
                                     </imageView>
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="IJ0-W6-Wbr">
-                                        <rect key="frame" x="0.0" y="211.66666666666663" width="197" height="10.333333333333343"/>
+                                        <rect key="frame" x="0.0" y="211.66666666666671" width="197" height="118.33333333333334"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="20.300000000000001" translatesAutoresizingMaskIntoConstraints="NO" id="xCq-Y3-l3g" userLabel="BlueLabel">
-                                                <rect key="frame" x="0.0" y="0.0" width="98.666666666666671" height="10.333333333333334"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="98.666666666666671" height="118.33333333333333"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="textColor" red="0.039215686270000001" green="0.51764705879999995" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C29-ch-eGq" userLabel="RedLabel">
-                                                <rect key="frame" x="98.666666666666657" y="0.0" width="98.333333333333343" height="10.333333333333334"/>
+                                                <rect key="frame" x="98.666666666666657" y="0.0" width="98.333333333333343" height="118.33333333333333"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                 <color key="textColor" systemColor="systemRedColor"/>
                                                 <nil key="highlightedColor"/>
@@ -49,7 +49,7 @@
                                 </constraints>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="17" translatesAutoresizingMaskIntoConstraints="NO" id="3BH-jb-fZf">
-                                <rect key="frame" x="98" y="617" width="197" height="34.333333333333371"/>
+                                <rect key="frame" x="98" y="666" width="197" height="34.333333333333371"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnD-97-nkZ">
                                         <rect key="frame" x="0.0" y="0.0" width="90" height="34.333333333333336"/>
@@ -89,6 +89,7 @@
                             <constraint firstItem="3BH-jb-fZf" firstAttribute="top" secondItem="XdV-e5-H0P" secondAttribute="bottom" constant="80" id="kRk-bQ-DSQ"/>
                         </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="ozf-UD-Re1"/>
                     <connections>
                         <outlet property="activityIndicatorView" destination="dki-Ao-9GF" id="5Sc-rB-Y5w"/>
                         <outlet property="blueLabel" destination="xCq-Y3-l3g" id="BeN-qr-zsw"/>
@@ -175,6 +176,7 @@
                     </tableView>
                     <connections>
                         <outlet property="listTableView" destination="m3W-BY-gZF" id="59N-b3-q2N"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="toDetailPage" id="psS-ab-Xgd"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQn-RX-VlJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
