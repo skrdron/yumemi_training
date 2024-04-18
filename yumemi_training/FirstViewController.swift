@@ -15,8 +15,8 @@ class FirstViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         //[Todo]初期画面をSecondViewControllerからListTableViewControllerに変更する
-        let nextVC = storyboard?.instantiateViewController(identifier: "ListTableView"){ coder in
-            ListTableViewController(coder: coder)
+        let nextVC = storyboard?.instantiateViewController(identifier: "ListView"){ coder in
+            ListViewController(coder: coder)
         }
         self.present(nextVC!, animated: true, completion: nil)
     }

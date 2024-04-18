@@ -146,11 +146,13 @@ class SecondViewController: UIViewController, CLLocationManagerDelegate {
         imageView.image = UIImage(named: imageName)
     }
     
+    
     private func displayErrorAlert(_ message: String) {
         let alertController = UIAlertController(title: "エラー", message: message, preferredStyle: .alert)
         alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alertController, animated: true, completion: nil)
     }
+    
     
     private func addObserverForAppWillEnterForeground() {
         NotificationCenter.default.addObserver(self, selector: #selector(updateWeatherData),
