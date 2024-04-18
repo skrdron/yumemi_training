@@ -167,14 +167,11 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="area" destination="PHO-h3-Fjm" id="bVd-yq-Ua2"/>
-                        <outlet property="areaLabel" destination="PHO-h3-Fjm" id="zCs-gB-noH"/>
+                        <outlet property="area" destination="PHO-h3-Fjm" id="DZx-6W-doy"/>
                         <outlet property="listTableView" destination="m3W-BY-gZF" id="59N-b3-q2N"/>
-                        <outlet property="maxTemperature" destination="Q87-y5-gKu" id="7R1-wT-KES"/>
-                        <outlet property="max_temperature" destination="Q87-y5-gKu" id="1hf-Fa-RW4"/>
-                        <outlet property="minTemperature" destination="9EU-vq-bFE" id="YCi-kU-0rd"/>
-                        <outlet property="min_temperature" destination="9EU-vq-bFE" id="njY-5X-69L"/>
-                        <outlet property="weatherImage" destination="Yoc-mL-Nk5" id="npS-ML-YHV"/>
+                        <outlet property="maxTemperature" destination="Q87-y5-gKu" id="2bD-H5-KhX"/>
+                        <outlet property="minTemperature" destination="9EU-vq-bFE" id="XAa-Oj-Rta"/>
+                        <outlet property="weatherImage" destination="Yoc-mL-Nk5" id="maN-xc-bVN"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQn-RX-VlJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
