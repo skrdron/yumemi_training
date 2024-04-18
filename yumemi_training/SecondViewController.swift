@@ -17,10 +17,11 @@ protocol WeatherFetching {
 public class WeatherProvider:WeatherFetching{
     func fetchWeather(_ request: WeatherRequest) async throws -> WeatherData {
         _ = encodeFetchWeatherParameter(area: request.area, date: Date())
-        //APIの結果を、コンカレンシー形式で受け取るように変更したい
         let jsonData = try JSONEncoder().encode(request)
         let jsonString = String(data: jsonData, encoding: .utf8)!
-        let result = try await YumemiWeather.asyncFetchWeather(jsonString)
+        //APIの変更
+        let result = try await YumemiWeather.asyncFetchWeatherList(jsonString)
+        print(jsonString)
         guard let weatherData = decodeFetchWeatherReturns(jsonString: result) else{
             throw WeatherProviderError.decodingError
         }
