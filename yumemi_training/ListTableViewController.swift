@@ -22,6 +22,10 @@ class ListTableViewController: UIViewController {
 //セルをタップしたときの処理
 extension ListTableViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-     //画面遷移
+      //[Todo]画面遷移のコードを記述
+        tableView.deselectRow(at: indexPath, animated: true)
+          
+        let segueName = "toDetailPage"
+        performSegue(withIdentifier: segueName, sender: nil)
     }
 }
