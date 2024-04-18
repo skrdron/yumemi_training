@@ -7,21 +7,21 @@
 
 import UIKit
 
-class ListTableViewController: UITableViewController {
+class ListTableViewController: UIViewController {
+    var tableView = UITableView()
 
-    @IBOutlet weak var areaLabel: UILabel!
-    @IBOutlet weak var weatherImage: UIImage!
-    @IBOutlet weak var min_temperature: UILabel!
-    @IBOutlet weak var max_temperature: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.delegate = self
+        tableView.frame = view.bounds
+        view.addSubview(tableView)
     }
+}
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 0
-    }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+//セルをタップしたときの処理
+extension ListTableViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+     //画面遷移
     }
 }

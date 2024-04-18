@@ -8,9 +8,14 @@
 import UIKit
 
 class ListTableViewCell:UITableViewCell{
+
     @IBOutlet weak var area: UILabel!
     @IBOutlet weak var weatherImage: UIImage!
     @IBOutlet weak var minTemperature: UILabel!
     @IBOutlet weak var maxTemperature: UILabel!
     
 }
+
+
+
+
