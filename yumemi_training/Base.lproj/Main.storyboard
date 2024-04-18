@@ -103,13 +103,13 @@
         <!--List Table View Controller-->
         <scene sceneID="yTb-YW-Nbf">
             <objects>
-                <tableViewController storyboardIdentifier="WeatherListTableView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JKc-vn-2OL" customClass="ListTableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="m3W-BY-gZF">
+                <tableViewController storyboardIdentifier="ListTableView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JKc-vn-2OL" customClass="ListTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="m3W-BY-gZF" customClass="ListTableView">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="weatherInfoCell" rowHeight="75" id="XCg-eR-rDF">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListTableViewCell" rowHeight="75" id="XCg-eR-rDF" customClass="ListTableViewCell" customModule="yumemi_training" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="50" width="393" height="75"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XCg-eR-rDF" id="Z5o-WJ-6dM">
@@ -119,7 +119,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PHO-h3-Fjm" userLabel="area" customClass="area">
                                             <rect key="frame" x="31" y="29" width="48" height="18"/>
                                             <accessibility key="accessibilityConfiguration" identifier="area"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                            <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="20"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
@@ -159,6 +159,13 @@
                                         <constraint firstItem="PHO-h3-Fjm" firstAttribute="leading" secondItem="Z5o-WJ-6dM" secondAttribute="leadingMargin" constant="11" id="qhY-2S-Ucp"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <accessibility key="accessibilityConfiguration" identifier="ListTableView"/>
+                                <connections>
+                                    <outlet property="area" destination="PHO-h3-Fjm" id="1H9-iq-YeB"/>
+                                    <outlet property="maxTemperature" destination="Q87-y5-gKu" id="giZ-5H-eIG"/>
+                                    <outlet property="minTemperature" destination="9EU-vq-bFE" id="ftg-vx-3CO"/>
+                                    <outlet property="weatherImage" destination="Yoc-mL-Nk5" id="0ec-EG-PcB"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -167,11 +174,7 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="area" destination="PHO-h3-Fjm" id="DZx-6W-doy"/>
                         <outlet property="listTableView" destination="m3W-BY-gZF" id="59N-b3-q2N"/>
-                        <outlet property="maxTemperature" destination="Q87-y5-gKu" id="2bD-H5-KhX"/>
-                        <outlet property="minTemperature" destination="9EU-vq-bFE" id="XAa-Oj-Rta"/>
-                        <outlet property="weatherImage" destination="Yoc-mL-Nk5" id="maN-xc-bVN"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQn-RX-VlJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
