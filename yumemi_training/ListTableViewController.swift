@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ListTableViewController: UIViewController {
+class ListViewController: UIViewController {
     var tableView = UITableView()
 
     override func viewDidLoad() {
@@ -20,7 +20,7 @@ class ListTableViewController: UIViewController {
 
 
 //セルをタップしたときの処理
-extension ListTableViewController: UITableViewDelegate {
+extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       //[Todo]画面遷移のコードを記述
         tableView.deselectRow(at: indexPath, animated: true)
