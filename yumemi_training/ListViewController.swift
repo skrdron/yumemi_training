@@ -50,6 +50,8 @@ class ListViewController: UIViewController, WeatherFetching{
      override func viewDidLoad() {
          super.viewDidLoad()
          fetchWeatherData()
+         listTableView.dataSource = self
+         listTableView.delegate = self
      }
     
     func fetchWeather(_ request: WeatherRequest) async throws -> [WeatherData] {
@@ -134,6 +136,16 @@ extension ListViewController: UITableViewDataSource {
         cell.configure(with: data)
         return cell
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetailPage" {
+            guard let indexPath = listTableView.indexPathForSelectedRow,
+                     let secondViewController = segue.destination as? SecondViewController else {
+                   return
+               }
+               secondViewController.weatherData = weatherDataArray[indexPath.row]
+        }
+    }
 }
 
 //テーブルビューのセルが選択されたときに実行される動作を定義
@@ -141,7 +153,7 @@ extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let segueName = "toDetailPage"
-        performSegue(withIdentifier: segueName, sender: nil)
+        performSegue(withIdentifier: segueName, sender: self)
     }
 }
 

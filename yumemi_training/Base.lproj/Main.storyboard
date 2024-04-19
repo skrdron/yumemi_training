@@ -52,20 +52,12 @@
                                 <rect key="frame" x="98" y="666" width="197" height="34.333333333333371"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fnD-97-nkZ">
-                                        <rect key="frame" x="0.0" y="0.0" width="90" height="34.333333333333336"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="197" height="34.333333333333336"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Close"/>
                                         <connections>
                                             <action selector="closeButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="aQk-yP-yte"/>
-                                            <segue destination="wwo-4K-TVD" kind="presentation" identifier="toFirst" id="KTX-tJ-Dyb"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bqA-4N-mWp" userLabel="reLoadButton">
-                                        <rect key="frame" x="107" y="0.0" width="90" height="34.333333333333336"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Reload"/>
-                                        <connections>
-                                            <action selector="reloadButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Kgr-7B-mws"/>
+                                            <segue destination="ECM-VX-7dP" kind="show" identifier="toList" id="Al1-hU-QjA"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -106,61 +98,64 @@
             <objects>
                 <viewController storyboardIdentifier="ListView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ECM-VX-7dP" customClass="ListViewController" customModule="yumemi_training" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eZM-fS-ehI">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="9bT-Rs-Tdd" customClass="ListTableView" customModule="yumemi_training" customModuleProvider="target">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="9bT-Rs-Tdd">
                                 <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListTableViewCell" rowHeight="75" id="XCg-eR-rDF" customClass="ListTableViewCell" customModule="yumemi_training" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="50" width="393" height="75"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ListTableViewCell" id="XCg-eR-rDF" customClass="ListTableViewCell" customModule="yumemi_training" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="50" width="393" height="94.333335876464844"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XCg-eR-rDF" id="Z5o-WJ-6dM" customClass="ListTableViewCell" customModule="yumemi_training" customModuleProvider="target">
-                                            <rect key="frame" x="0.0" y="0.0" width="393" height="75"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XCg-eR-rDF" id="Z5o-WJ-6dM">
+                                            <rect key="frame" x="0.0" y="0.0" width="393" height="94.333335876464844"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PHO-h3-Fjm" userLabel="area" customClass="area" customModule="yumemi_training" customModuleProvider="target">
-                                                    <rect key="frame" x="31" y="29" width="48" height="24"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PHO-h3-Fjm" userLabel="area">
+                                                    <rect key="frame" x="40" y="35" width="48" height="24.333333333333329"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="area"/>
                                                     <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="20"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Yoc-mL-Nk5" userLabel="weatherImage" customClass="weatherImage" customModule="yumemi_training" customModuleProvider="target">
-                                                    <rect key="frame" x="208" y="11" width="53" height="53"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Yoc-mL-Nk5" userLabel="weatherImage">
+                                                    <rect key="frame" x="171.66666666666666" y="22.333333333333329" width="50" height="50"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="weatherImage"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" secondItem="Yoc-mL-Nk5" secondAttribute="height" multiplier="1:1" id="lJd-0X-yGG"/>
+                                                        <constraint firstAttribute="width" constant="50" id="IGr-ih-Pmj"/>
+                                                        <constraint firstAttribute="width" secondItem="Yoc-mL-Nk5" secondAttribute="height" multiplier="1:1" id="zqs-xW-KsV"/>
                                                     </constraints>
                                                 </imageView>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9EU-vq-bFE" userLabel="minTemperature" customClass="minTemperature">
-                                                    <rect key="frame" x="283" y="29" width="35.333333333333314" height="17"/>
-                                                    <accessibility key="accessibilityConfiguration" identifier="minTemperature"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <color key="textColor" name="AccentColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q87-y5-gKu" userLabel="maxTemperature" customClass="maxTemperature" customModule="yumemi_training" customModuleProvider="target">
-                                                    <rect key="frame" x="326.33333333333331" y="29" width="35.333333333333314" height="17"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Q87-y5-gKu" userLabel="maxTemperature">
+                                                    <rect key="frame" x="297" y="38.666666666666664" width="76" height="17"/>
                                                     <accessibility key="accessibilityConfiguration" identifier="maxTemperature"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" name="Red"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9EU-vq-bFE" userLabel="minTemperature">
+                                                    <rect key="frame" x="241.66666666666666" y="38.666666666666664" width="35.333333333333343" height="17"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="minTemperature"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <color key="textColor" name="AccentColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="centerY" secondItem="Z5o-WJ-6dM" secondAttribute="centerY" id="4pO-IP-vo9"/>
-                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Q87-y5-gKu" secondAttribute="trailing" constant="18" id="AOR-vX-bpr"/>
-                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="centerY" secondItem="Q87-y5-gKu" secondAttribute="centerY" id="F8n-H0-gg1"/>
-                                                <constraint firstItem="Q87-y5-gKu" firstAttribute="leading" secondItem="9EU-vq-bFE" secondAttribute="trailing" constant="8" symbolic="YES" id="GaP-C0-2dN"/>
-                                                <constraint firstItem="9EU-vq-bFE" firstAttribute="leading" secondItem="Yoc-mL-Nk5" secondAttribute="trailing" constant="22" id="Lqt-Vk-PgC"/>
-                                                <constraint firstItem="Q87-y5-gKu" firstAttribute="top" secondItem="PHO-h3-Fjm" secondAttribute="top" id="NMi-3f-MQR"/>
-                                                <constraint firstAttribute="trailing" secondItem="Yoc-mL-Nk5" secondAttribute="trailing" constant="132" id="Tpj-zu-VVG"/>
-                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="PHO-h3-Fjm" secondAttribute="trailing" constant="8" symbolic="YES" id="Z9o-iq-KRd"/>
-                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="bottom" secondItem="Z5o-WJ-6dM" secondAttribute="bottomMargin" id="cJJ-4T-H1Y"/>
-                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="centerY" secondItem="9EU-vq-bFE" secondAttribute="centerY" id="q4e-jX-jrt"/>
-                                                <constraint firstItem="PHO-h3-Fjm" firstAttribute="leading" secondItem="Z5o-WJ-6dM" secondAttribute="leadingMargin" constant="11" id="qhY-2S-Ucp"/>
+                                                <constraint firstItem="Q87-y5-gKu" firstAttribute="centerY" secondItem="Z5o-WJ-6dM" secondAttribute="centerY" id="5M8-93-5Qp"/>
+                                                <constraint firstItem="PHO-h3-Fjm" firstAttribute="top" secondItem="Z5o-WJ-6dM" secondAttribute="top" constant="35" id="6QS-qZ-jXU"/>
+                                                <constraint firstItem="PHO-h3-Fjm" firstAttribute="centerY" secondItem="Z5o-WJ-6dM" secondAttribute="centerY" id="7wU-nB-vJK"/>
+                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="centerX" secondItem="Z5o-WJ-6dM" secondAttribute="centerX" id="Gxx-pC-pK9"/>
+                                                <constraint firstItem="PHO-h3-Fjm" firstAttribute="leading" secondItem="Z5o-WJ-6dM" secondAttribute="leadingMargin" constant="20" id="Rh6-AU-WdA"/>
+                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="centerY" secondItem="Z5o-WJ-6dM" secondAttribute="centerY" id="cbB-Hp-70c"/>
+                                                <constraint firstItem="9EU-vq-bFE" firstAttribute="centerY" secondItem="Z5o-WJ-6dM" secondAttribute="centerY" id="llx-dM-q4F"/>
+                                                <constraint firstAttribute="trailing" secondItem="Q87-y5-gKu" secondAttribute="trailing" constant="20" id="mI7-o2-ZQ0"/>
+                                                <constraint firstItem="9EU-vq-bFE" firstAttribute="leading" secondItem="Yoc-mL-Nk5" secondAttribute="trailing" constant="20" id="nZ5-by-UFE"/>
+                                                <constraint firstItem="Q87-y5-gKu" firstAttribute="leading" secondItem="9EU-vq-bFE" secondAttribute="trailing" constant="20" id="pFo-kw-VVH"/>
+                                                <constraint firstItem="Yoc-mL-Nk5" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="PHO-h3-Fjm" secondAttribute="trailing" constant="8" symbolic="YES" id="tO7-fZ-YGF"/>
+                                                <constraint firstItem="9EU-vq-bFE" firstAttribute="leading" secondItem="Yoc-mL-Nk5" secondAttribute="trailing" constant="20" id="zh0-WT-6U7"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <accessibility key="accessibilityConfiguration" identifier="ListTableViewCell"/>
@@ -177,27 +172,22 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nz5-2z-Re5"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="nz5-2z-Re5" firstAttribute="trailing" secondItem="9bT-Rs-Tdd" secondAttribute="trailing" id="1Ji-ag-3iU"/>
-                            <constraint firstItem="nz5-2z-Re5" firstAttribute="bottom" secondItem="9bT-Rs-Tdd" secondAttribute="bottom" id="SAf-y1-BwG"/>
-                            <constraint firstItem="9bT-Rs-Tdd" firstAttribute="leading" secondItem="nz5-2z-Re5" secondAttribute="leading" id="Srq-Jz-elg"/>
-                            <constraint firstItem="9bT-Rs-Tdd" firstAttribute="top" secondItem="nz5-2z-Re5" secondAttribute="top" id="oHE-8W-nf4"/>
-                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="cHs-0L-bpF"/>
                     <connections>
                         <outlet property="listTableView" destination="9bT-Rs-Tdd" id="Se2-F5-z7m"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="viV-0d-sjD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1211" y="865"/>
+            <point key="canvasLocation" x="-1211.4503816793892" y="864.78873239436621"/>
         </scene>
         <!--First View Controller-->
         <scene sceneID="L8I-Tt-vUu">
             <objects>
                 <viewController storyboardIdentifier="FirstView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="wwo-4K-TVD" customClass="FirstViewController" customModule="yumemi_training" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="eP1-LG-VC2">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="WmD-Yi-P9P"/>
                         <color key="backgroundColor" systemColor="labelColor"/>
@@ -208,6 +198,9 @@
             <point key="canvasLocation" x="-1211" y="4"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="yNw-ag-06W"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
