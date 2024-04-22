@@ -46,13 +46,27 @@ struct WeatherInfo: Codable {
 class ListViewController: UIViewController, WeatherFetching{
     @IBOutlet weak var listTableView: UITableView!
     var weatherDataArray:[WeatherData] = []
+    private let refreshControl = UIRefreshControl()
     
      override func viewDidLoad() {
          super.viewDidLoad()
          fetchWeatherData()
          listTableView.dataSource = self
          listTableView.delegate = self
+         setupRefreshControl()
      }
+    
+    // リフレッシュコントロールの設定
+    private func setupRefreshControl() {
+      listTableView.refreshControl = refreshControl
+      refreshControl.addTarget(self, action: #selector(refreshWeatherData(_:)), for: .valueChanged)
+      refreshControl.attributedTitle = NSAttributedString(string: "天気情報を取得中...")
+    }
+
+    // リフレッシュアクション
+    @objc private func refreshWeatherData(_ sender: Any) {
+      fetchWeatherData()
+    }
     
     func fetchWeather(_ request: WeatherRequest) async throws -> [WeatherData] {
         let jsonData = try JSONEncoder().encode(request)
@@ -86,12 +100,14 @@ class ListViewController: UIViewController, WeatherFetching{
                 self.weatherDataArray = weatherData
                 //テーブルビューの内容を再描画
                 self.listTableView.reloadData()
+                self.refreshControl.endRefreshing()
             }
          } catch {
              //原因がわからないからログを追加
              print("天気情報取得に失敗しました: \(error.localizedDescription)")
              // デバッグ用にリクエストの内容も表示
              print("リクエストデータ: \(request)")
+             self.refreshControl.endRefreshing()
          }
       }
     }
