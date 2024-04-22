@@ -11,16 +11,11 @@ class SecondViewController: UIViewController{
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var blueLabel: UILabel!
     @IBOutlet weak var redLabel: UILabel!
-    @IBAction func closeButton(_ sender: Any) {
-        self.performSegue(withIdentifier: "toList", sender: self)
-    }
-    @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
     
     var weatherData: WeatherData?
     
     override func viewDidLoad() {
       super.viewDidLoad()
-      activityIndicatorView.isHidden = true
       updateUI()
     }
     
