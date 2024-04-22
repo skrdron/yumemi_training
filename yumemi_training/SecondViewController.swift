@@ -12,10 +12,9 @@ class SecondViewController: UIViewController{
     @IBOutlet weak var blueLabel: UILabel!
     @IBOutlet weak var redLabel: UILabel!
     @IBAction func closeButton(_ sender: Any) {
-        self.performSegue(withIdentifier: "toFirst", sender: self)
+        self.performSegue(withIdentifier: "toList", sender: self)
     }
     @IBOutlet weak var activityIndicatorView: UIActivityIndicatorView!
-    @IBAction func reloadButton(_ sender: Any) {}
     
     var weatherData: WeatherData?
     
