@@ -21,16 +21,17 @@ class SecondViewController: UIViewController{
     override func viewDidLoad() {
       super.viewDidLoad()
       activityIndicatorView.isHidden = true
-        updateUI()
+      updateUI()
     }
     
     private func updateUI() {
       guard let data = weatherData else { return }
-        blueLabel.text = "\(data.info.minTemperature)℃"
-        redLabel.text = "\(data.info.maxTemperature)℃"
-        let imageName = displayWeatherImage(data.info.weatherCondition)
-        imageView.image = UIImage(named: imageName)
-       }
+      blueLabel.text = "\(data.info.minTemperature)℃"
+      redLabel.text = "\(data.info.maxTemperature)℃"
+      let imageName = displayWeatherImage(data.info.weatherCondition)
+      imageView.image = UIImage(named: imageName)
+      self.title = data.area
+    }
     
     private func displayWeatherImage(_ weatherCondition: String) -> String {
         switch weatherCondition {
@@ -46,6 +47,3 @@ class SecondViewController: UIViewController{
         }
     }
 }
-
-
-

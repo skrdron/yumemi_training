@@ -168,8 +168,13 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let segueName = "toDetailPage"
-        performSegue(withIdentifier: segueName, sender: self)
+        // SecondViewControllerをインスタンス化
+        if let secondViewController = storyboard?.instantiateViewController(withIdentifier: "SecondView") as? SecondViewController {
+            // 選択されたセルの天気データを渡す
+            secondViewController.weatherData = weatherDataArray[indexPath.row]
+            // UINavigationControllerを使用して画面遷移
+            navigationController?.pushViewController(secondViewController, animated: true)
+        }
     }
 }
 
