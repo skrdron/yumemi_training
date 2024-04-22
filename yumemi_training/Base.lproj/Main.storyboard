@@ -91,7 +91,23 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="213" y="403"/>
+            <point key="canvasLocation" x="-85" y="3"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="Bk2-G5-wt4">
+            <objects>
+                <navigationController id="gg7-ap-iYw" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="UgZ-3Z-zql">
+                        <rect key="frame" x="0.0" y="59" width="393" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="ECM-VX-7dP" kind="show" id="wN1-9A-eox"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="AJk-Ah-gua" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2239" y="3"/>
         </scene>
         <!--List View Controller-->
         <scene sceneID="eWa-UG-0Ig">
@@ -180,7 +196,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="viV-0d-sjD" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1211.4503816793892" y="864.78873239436621"/>
+            <point key="canvasLocation" x="-1205" y="3"/>
         </scene>
         <!--First View Controller-->
         <scene sceneID="L8I-Tt-vUu">
@@ -195,11 +211,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eZ8-aa-GGn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1211" y="4"/>
+            <point key="canvasLocation" x="-3285" y="3"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="yNw-ag-06W"/>
+        <segue reference="Al1-hU-QjA"/>
     </inferredMetricsTieBreakers>
     <resources>
         <namedColor name="AccentColor">
@@ -215,7 +232,7 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
